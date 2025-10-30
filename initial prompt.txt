@@ -1,0 +1,2 @@
+
+I want to create a home asisstant custom component. Basically it should take a danish license plate. Read https://www.tjekbil.dk/nummerplade/[numberplate]/overblik Replace [numberplate] with the chosen numberplate and then once per day it goes in a checks the Car worth. The price is a spectrum so take min max and average.
