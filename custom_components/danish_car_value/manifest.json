@@ -1,0 +1,9 @@
+{
+  "domain": "danish_car_value",
+  "name": "Danish Car Value",
+  "documentation": "https://www.tjekbil.dk/",
+  "codeowners": ["@your-github-handle"],
+  "requirements": [],
+  "version": "0.1.0",
+  "iot_class": "cloud_polling"
+}
