@@ -24,7 +24,13 @@ from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity, UpdateFailed
 from homeassistant.exceptions import PlatformNotReady
 
-from .const import CONF_LICENSE_PLATE, DEFAULT_NAME, DOMAIN
+from .const import (
+    CONF_API_KEY,
+    CONF_LICENSE_PLATE,
+    CONF_MILEAGE,
+    DEFAULT_NAME,
+    DOMAIN,
+)
 from .coordinator import DanishCarValueCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -67,6 +73,8 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_LICENSE_PLATE): cv.string,
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
+        vol.Optional(CONF_API_KEY): cv.string,
+        vol.Optional(CONF_MILEAGE): cv.positive_int,
     }
 )
 
@@ -82,7 +90,15 @@ async def async_setup_platform(
     plate: str = config[CONF_LICENSE_PLATE]
     base_name: str = config.get(CONF_NAME, DEFAULT_NAME)
 
-    coordinator = DanishCarValueCoordinator(hass, plate)
+    api_key: str | None = config.get(CONF_API_KEY)
+    mileage: int | None = config.get(CONF_MILEAGE)
+
+    coordinator = DanishCarValueCoordinator(
+        hass,
+        plate,
+        api_key=api_key,
+        mileage=mileage,
+    )
     try:
         await coordinator.async_config_entry_first_refresh()
     except UpdateFailed as err:
@@ -148,6 +164,7 @@ class DanishCarValueSensor(CoordinatorEntity[dict[str, Any]], SensorEntity):
             "headline": data.get("headline"),
             "failed_message": data.get("failedMessage"),
             "mileage": data.get("mileage"),
+            "requested_mileage": data.get("requestedMileage"),
             "brand": vehicle.get("maerkeTypeNavn"),
             "model": vehicle.get("modelTypeNavn"),
             "variant": vehicle.get("variantTypeNavn"),
